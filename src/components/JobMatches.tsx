@@ -244,12 +244,18 @@ export function JobMatches() {
         <div className="space-y-6">
           {/* Overall Score */}
           <div className="text-center">
-            <div className={`inline-flex items-center justify-center w-20 h-20 rounded-full ${getScoreBgColor(match.matchScore)} mb-2`}>
-              <span className={`text-2xl font-bold ${getScoreColor(match.matchScore)}`}>
+            <div className={`inline-flex items-center justify-center w-24 h-24 rounded-full ${getScoreBgColor(match.matchScore)} mb-3 border-4 ${match.matchScore >= 90 ? 'border-green-300' : match.matchScore >= 75 ? 'border-blue-300' : match.matchScore >= 60 ? 'border-yellow-300' : 'border-red-300'}`}>
+              <span className={`text-3xl font-bold ${getScoreColor(match.matchScore)}`}>
                 {match.matchScore}%
               </span>
             </div>
-            <p className="text-sm text-muted-foreground">Overall Match Score</p>
+            <p className="text-sm text-muted-foreground mb-2">Overall Match Score</p>
+            <Progress value={match.matchScore} className="w-32 mx-auto" />
+            <p className="text-xs text-muted-foreground mt-1">
+              {match.matchScore >= 90 ? 'Excellent Match' : 
+               match.matchScore >= 75 ? 'Good Match' : 
+               match.matchScore >= 60 ? 'Fair Match' : 'Poor Match'}
+            </p>
           </div>
 
           {/* Why it's a good match */}
@@ -313,6 +319,37 @@ export function JobMatches() {
             </div>
           </div>
 
+          {/* Quick Summary */}
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <h3 className="font-semibold text-gray-800 mb-3">📊 Match Summary:</h3>
+            <div className="grid grid-cols-2 gap-4 text-sm">
+              <div>
+                <span className="text-muted-foreground">Experience Level:</span>
+                <div className="font-medium">
+                  {match.experienceRequired <= 3 ? '✅ Meets requirement' : 
+                   match.experienceRequired <= 5 ? '⚠️ Close match' : '❌ Below requirement'}
+                </div>
+              </div>
+              <div>
+                <span className="text-muted-foreground">Skills Match:</span>
+                <div className="font-medium">
+                  {match.matchScore >= 85 ? '✅ Excellent' : 
+                   match.matchScore >= 70 ? '⚠️ Good' : '❌ Needs work'}
+                </div>
+              </div>
+              <div>
+                <span className="text-muted-foreground">Location:</span>
+                <div className="font-medium">
+                  {match.location.includes('Remote') ? '✅ Remote friendly' : '📍 ' + match.location}
+                </div>
+              </div>
+              <div>
+                <span className="text-muted-foreground">Job Type:</span>
+                <div className="font-medium">{match.jobType}</div>
+              </div>
+            </div>
+          </div>
+
           {/* Recommendations */}
           <div className="bg-blue-50 p-4 rounded-lg">
             <h3 className="font-semibold text-blue-800 mb-2">💡 Recommendations:</h3>
@@ -321,6 +358,7 @@ export function JobMatches() {
               <li>• Consider taking a course in areas where you need improvement</li>
               <li>• Emphasize relevant project experience in your cover letter</li>
               {match.matchScore >= 85 && <li>• This is a high-match opportunity - apply soon!</li>}
+              {match.matchScore < 70 && <li>• Consider improving skills in key areas before applying</li>}
             </ul>
           </div>
         </div>
@@ -409,14 +447,19 @@ export function JobMatches() {
                     </div>
                     <div className="flex items-center gap-2">
                       {/* Match Score */}
-                      <div className={`px-3 py-1 rounded-full ${getScoreBgColor(match.matchScore)} flex items-center gap-2`}>
-                        <Star className={`h-4 w-4 ${getScoreColor(match.matchScore)}`} />
-                        <span className={`font-bold ${getScoreColor(match.matchScore)}`}>
-                          {match.matchScore}% Match
+                      <div className={`px-4 py-2 rounded-full ${getScoreBgColor(match.matchScore)} flex items-center gap-2 border-2 ${match.matchScore >= 90 ? 'border-green-200' : match.matchScore >= 75 ? 'border-blue-200' : match.matchScore >= 60 ? 'border-yellow-200' : 'border-red-200'}`}>
+                        <Star className={`h-5 w-5 ${getScoreColor(match.matchScore)}`} />
+                        <span className={`text-lg font-bold ${getScoreColor(match.matchScore)}`}>
+                          {match.matchScore}%
                         </span>
                       </div>
                       {/* Help Button */}
-                      <MatchExplanationDialog match={match} />
+                      <div className="relative group">
+                        <MatchExplanationDialog match={match} />
+                        <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                          Why this match?
+                        </div>
+                      </div>
                     </div>
                   </div>
 
